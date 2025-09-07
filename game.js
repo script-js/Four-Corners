@@ -1,7 +1,7 @@
 if (localStorage.getItem("game")) {
     var gameSettings = JSON.parse(localStorage.getItem("game"))
 } else {
-    //location.replace("setup")
+    location.replace("setup")
 }
 
 function chooser(index, delay) {
@@ -10,6 +10,8 @@ function chooser(index, delay) {
     if (gameSettings.st) {
         if (index > 0) {
             executeScene(gameSettings.stdata[gameSettings.areas[index - 1]].off)
+        } else {
+            executeScene(gameSettings.stdata[gameSettings.areas[gameSettings.areas.length - 1]].off)
         }
         executeScene(gameSettings.stdata[gameSettings.areas[index]].on)
     }
