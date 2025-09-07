@@ -34,6 +34,7 @@ async function getSceneId(scenename, callback) {
 }
 
 async function executeScene(id) {
+    var authToken = gameSettings.st
     var sceneUrl = "https://api.smartthings.com/v1/scenes/" + id + "/execute"
     var request = new XMLHttpRequest();
     request.open("POST", sceneUrl, true);
