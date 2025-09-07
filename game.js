@@ -5,6 +5,7 @@ if (localStorage.getItem("game")) {
 }
 
 function chooser(index, delay) {
+    var timeAddition = Math.floor(Math.random() * (70 - 20 + 1)) + 20;
     startfx(spinSound)
     if (gameSettings.st) {
         if (index > 0) {
@@ -16,9 +17,9 @@ function chooser(index, delay) {
     mainText.innerText = gameSettings.areas[index]
     if (delay < 1100) {
         if (index >= (gameSettings.areas.length - 1)) {
-            setTimeout(function () { chooser(0, delay + 50) }, delay)
+            setTimeout(function () { chooser(0, delay + timeAddition) }, delay)
         } else {
-            setTimeout(function () { chooser(index + 1, delay + 50) }, delay)
+            setTimeout(function () { chooser(index + 1, delay + timeAddition) }, delay)
         }
     } else {
         setTimeout(function () { eliminate(gameSettings.areas[index]) }, delay)
