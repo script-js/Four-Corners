@@ -23,7 +23,6 @@ async function getSceneId(scenename, callback) {
             })
             if (!found) {
                 alert("Scene \"" + scenename + "\" could not be found.");
-                callback("")
             }
         } else {
             alert("Scene \"" + scenename + "\" could not be found.");
