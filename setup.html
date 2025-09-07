@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Four Corners</title>
+    <script src="st.js"></script>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <h1>Setup</h1>
+    <h2>General</h2>
+    Countdown:<br><input type="range" max="20" min="3" value="10" onchange="setTime(this.value)" />
+    <br><span id="timeText">10</span> seconds
+    <h2>Areas</h2>
+    <div id="areas">
+        <button onclick="addArea()">Add Area</button>
+    </div>
+    <h2>SmartThings Integration (smart lights)</h2>
+    <input type="checkbox" name="stcb" id="stcb" onchange="useST(this.checked)">
+    <label for="stcb">Use SmartThings</label>
+    <div id="st" style="display: none;">
+        Personal Access Token: <input id="pat" onchange="gamesetup.st = this.value"><br>
+        <span style="font-size: 13px;">Get a personal access token: <a
+                href="https://account.smartthings.com/tokens">https://account.smartthings.com/tokens</a> | Make sure to
+            enable all scenes permissions (list, see, execute)</span>
+    </div>
+    <p><progress id="stprog" style="display: none;" value="0">Loading...</progress><br></p>
+    <button style="padding: 10px;" onclick="compile()">Play</button>
+</body>
+<script>
+    var gamesetup = {
+        time: 10,
+        areas: [],
+        st: false,
+        stdata: {}
+    }
+
+    function setTime(t) {
+        gamesetup.time = t;
+        timeText.innerText = t;
+    }
+
+    function getAreas() {
+        var areaList = [];
+        Array.from(areas.querySelectorAll(".areaContainer")).forEach(function (e) {
+            var currentName = e.querySelector("#name").value
+            if (currentName) {
+                areaList.push(currentName)
+            }
+        })
+        return areaList;
+    }
+
+    function addArea(presetname) {
+        var a = document.createElement("div");
+        a.classList = "areaContainer";
+        a.innerHTML = `<input id="name" onchange="checkDuplicates(this);" placeholder="Area Name"><button onclick="this.parentElement.remove(); refreshSTAreas();">Remove Area</button>`;
+        if (presetname) {
+            a.querySelector("#name").value = presetname
+        }
+        areas.appendChild(a);
+        refreshSTAreas();
+    }
+
+    function checkDuplicates(elem) {
+        var areas1 = getAreas()
+        delete areas1[areas1.indexOf(elem.value)];
+        if (areas1.includes(elem.value)) {
+            alert("Two rooms cannot have the same name.")
+            elem.value += " 2";
+        } else {
+            refreshSTAreas();
+        }
+    }
+
+    function useST(val) {
+        gamesetup.st = val;
+        refreshSTAreas();
+        if (val) {
+            st.style.display = "block"
+        } else {
+            st.style.display = "none"
+        }
+    }
+
+    function refreshSTAreas() {
+        if (gamesetup.st) {
+            var currentEntries = Array.from(st.querySelectorAll(".areaContainer")).map((x) => x.id)
+            getAreas().forEach(function (aname) {
+                var a = document.createElement("div");
+                a.classList = "areaContainer";
+                a.id = aname;
+                a.innerHTML = `${aname}: <input id="on" placeholder="Lights On Scene Name" title="The scene that turns the lights on in this area"> <input id="off" placeholder="Lights Off Scene Name" title="The scene that turns the lights off in this area"> <input id="lose" placeholder="Eliminated Scene Name" title="The scene executed when an area is eliminated">`;
+                if (!currentEntries.includes(aname)) {
+                    st.appendChild(a);
+                }
+            })
+            currentEntries.forEach(function (id) {
+                if (!getAreas().includes(id)) {
+                    st.querySelector("#" + id).remove();
+                }
+            })
+        }
+    }
+
+    function compile() {
+        if (gamesetup.st) {
+            gamesetup.st = pat.value
+        }
+        if (gamesetup.st && gamesetup === true) {
+            alert("Please enter a SmartThings Personal Access Token.");
+            return;
+        }
+        gamesetup.areas = getAreas();
+        if (gamesetup.areas.length < 2) {
+            alert("Not enough areas");
+            return
+        }
+        if (gamesetup.st) {
+            stprog.style.display = "inline";
+            stprog.max = getAreas().length * 3;
+            Array.from(st.querySelectorAll(".areaContainer")).forEach(function (e) {
+                gamesetup.stdata[e.id] = {};
+                getSceneId(e.querySelector("#on").value, function (sid) {
+                    gamesetup.stdata[e.id].on = sid;
+                    stprog.value++;
+                })
+                getSceneId(e.querySelector("#off").value, function (sid) {
+                    gamesetup.stdata[e.id].off = sid;
+                    stprog.value++;
+                })
+                getSceneId(e.querySelector("#lose").value, function (sid) {
+                    gamesetup.stdata[e.id].lose = sid;
+                    stprog.value++;
+                })
+            })
+            var interval = setInterval(function () {
+                if (stprog.value == stprog.max) {
+                    setTimeout(function () {
+                        localStorage.setItem("game", JSON.stringify(gamesetup))
+                        location.href = "/";
+                        console.log(gamesetup)
+                        stprog.style.display = "none"
+                    }, 1000)
+                    clearInterval(interval)
+                }
+            }, 1)
+        } else {
+            localStorage.setItem("game", JSON.stringify(gamesetup))
+            location.href = "/";
+        }
+    }
+
+    if (localStorage.getItem("game")) {
+        gamesetup = JSON.parse(localStorage.getItem("game"))
+        gamesetup.areas.forEach(function (a) { addArea(a) })
+        if (gamesetup.st) {
+            stcb.checked = true;
+            st.style.display = "block"
+            refreshSTAreas()
+        } else {
+            stcb.checked = false;
+        }
+    } else {
+        addArea();
+        addArea();
+        addArea();
+        addArea();
+        stcb.checked = false;
+    }
+</script>
+
+</html>
