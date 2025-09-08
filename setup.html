@@ -12,6 +12,9 @@
     <h2>General</h2>
     Countdown:<br><input type="range" max="20" min="3" value="10" onchange="setTime(this.value)" />
     <br><span id="timeText">10</span> seconds
+    <p></p>
+    Final Round Countdown:<br><input type="range" max="20" min="3" value="10" onchange="setFTime(this.value)" />
+    <br><span id="ftimeText">10</span> seconds
     <h2>Areas</h2>
     <div id="areas">
         <button onclick="addArea()">Add Area</button>
@@ -32,6 +35,7 @@
     var gamesetup = {
         time: 10,
         areas: [],
+        final: { time: 10 },
         st: false,
         stdata: {}
     }
@@ -41,12 +45,23 @@
         timeText.innerText = t;
     }
 
-    function getAreas() {
+    function setFTime(t) {
+        gamesetup.final.time = t;
+        ftimeText.innerText = t;
+    }
+
+    function getAreas(final) {
         var areaList = [];
         Array.from(areas.querySelectorAll(".areaContainer")).forEach(function (e) {
             var currentName = e.querySelector("#name").value
             if (currentName) {
-                areaList.push(currentName)
+                if (final) {
+                    if (e.querySelector("#final").checked === true) {
+                        areaList.push(currentName)
+                    }
+                } else {
+                    areaList.push(currentName)
+                }
             }
         })
         return areaList;
@@ -55,7 +70,7 @@
     function addArea(presetname) {
         var a = document.createElement("div");
         a.classList = "areaContainer";
-        a.innerHTML = `<input id="name" onchange="checkDuplicates(this);" placeholder="Area Name"><button onclick="this.parentElement.remove(); refreshSTAreas();">Remove Area</button>`;
+        a.innerHTML = `<input id="name" onchange="checkDuplicates(this);" placeholder="Area Name"><button onclick="this.parentElement.remove(); refreshSTAreas();">Remove Area</button><br><input type="checkbox" id="final" name="final"><label for="final">Use in final round</label>`;
         if (presetname) {
             a.querySelector("#name").value = presetname
         }
@@ -113,6 +128,7 @@
             return;
         }
         gamesetup.areas = getAreas();
+        gamesetup.final.areas = getAreas(true)
         if (gamesetup.areas.length < 2) {
             alert("Not enough areas");
             return

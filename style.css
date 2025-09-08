@@ -29,12 +29,11 @@ body {
     background-color: gold;
 }
 
-#start {
+.largeBtn {
     padding: 10px;
     font-family: "Bungee Shade", sans-serif;
     font-size: 40px;
-    padding-left: 200px;
-    padding-right: 200px;
+    width: 600px;
     outline: 2px solid gold;
     border: 2px solid gray;
     border-radius: 20px;
@@ -43,7 +42,7 @@ body {
     transition: ease 200ms;
 }
 
-#start:hover {
+.largeBtn:hover {
     outline: 7px solid gold;
     border: 7px solid gray;
 }

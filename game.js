@@ -1,6 +1,6 @@
 if (localStorage.getItem("game")) {
     var gameSettings = JSON.parse(localStorage.getItem("game"))
-    gameSettings.areas.forEach(function(a) {
+    gameSettings.areas.forEach(function (a) {
         var c = document.createElement("div");
         c.classList = "circle"
         c.id = a;
@@ -22,8 +22,10 @@ function chooser(index, delay) {
         }
         executeScene(gameSettings.stdata[gameSettings.areas[index]].on)
     }
-    Array.from(circles.querySelectorAll(".circle")).forEach(function(c) {c.classList = "circle"; c.style.background = "";})
-    circles.querySelector("#" + gameSettings.areas[index]).classList = "circle selected"
+    Array.from(circles.querySelectorAll(".circle")).forEach(function (c) { c.classList = "circle"; c.style.background = ""; })
+    try {
+        document.getElementById(gameSettings.areas[index]).classList = "circle selected"
+    } catch { }
     mainText.innerText = gameSettings.areas[index]
     if (delay < 1100) {
         if (index >= (gameSettings.areas.length - 1)) {
@@ -41,14 +43,14 @@ function eliminate(area) {
         executeScene(gameSettings.stdata[area].lose)
     }
     startfx(loseSound)
-    circles.querySelector("#" + area).style.background = "red"
-    setTimeout(function() {
-      start.style.display = "inline"
+    document.getElementById(area).style.background = "red"
+    setTimeout(function () {
+        buttons.style.display = "inline"
     }, 1000)
 }
 
 function startTimer() {
-    start.style.display = "none"
+    buttons.style.display = "none"
     startfx(timerSound)
     mainText.innerText = gameSettings.time;
     var interval = setInterval(function () {
@@ -58,7 +60,7 @@ function startTimer() {
             timerSound.pause()
             ringSound.volume = 1
             startfx(ringSound)
-            setTimeout(function() {chooser(Math.floor(Math.random() * gameSettings.areas.length), 300)}, 2200)
+            setTimeout(function () { chooser(Math.floor(Math.random() * gameSettings.areas.length), 300) }, 2200)
         }
     }, 1000)
 }
@@ -66,4 +68,11 @@ function startTimer() {
 function startfx(sound) {
     sound.currentTime = 0;
     sound.play()
+}
+
+function finalRound() {
+    gameSettings.time = gameSettings.final.time;
+    gameSettings.areas = gameSettings.final.areas;
+    startFinal.style.display = "none";
+    startTimer();
 }
