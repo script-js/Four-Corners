@@ -3,8 +3,51 @@
 body {
     text-align: center;
     font-family: "Rubik", sans-serif;
+    background-color: aquamarine;
+}
+
+.titleCard {
+    font-family: "Oi", sans-serif;
 }
 
 #mainText {
     font-size: 100px;
+}
+
+.circle {
+    border-radius: 100%;
+    width: 100px;
+    display: inline-block;
+    height: 100px;
+    border: none;
+    margin: 5px;
+    background: rgb(63, 63, 63);
+    transition: ease 100ms;
+}
+
+.circle.selected {
+    background-color: gold;
+}
+
+#start {
+    padding: 10px;
+    font-family: "Bungee Shade", sans-serif;
+    font-size: 40px;
+    padding-left: 200px;
+    padding-right: 200px;
+    outline: 2px solid gold;
+    border: 2px solid gray;
+    border-radius: 20px;
+    background-color: coral;
+    color: rgb(255, 255, 0);
+    transition: ease 200ms;
+}
+
+#start:hover {
+    outline: 7px solid gold;
+    border: 7px solid gray;
+}
+
+button {
+    cursor: pointer;
 }
