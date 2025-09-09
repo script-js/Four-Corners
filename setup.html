@@ -131,7 +131,11 @@
         gamesetup.final.areas = getAreas(true)
         if (gamesetup.areas.length < 2) {
             alert("Not enough areas");
-            return
+            return;
+        }
+        if (gamesetup.final.areas.length < 2) {
+            alert("Please select at least two rooms for the final round.");
+            return;
         }
         if (gamesetup.st) {
             stprog.style.display = "inline";
