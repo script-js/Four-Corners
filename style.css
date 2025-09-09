@@ -22,7 +22,7 @@ body {
     border: none;
     margin: 5px;
     background: rgb(63, 63, 63);
-    transition: ease 100ms;
+    transition: ease 200ms;
 }
 
 .circle.selected {
@@ -40,6 +40,14 @@ body {
     background-color: coral;
     color: rgb(255, 255, 0);
     transition: ease 200ms;
+}
+
+button, input {
+    border-radius: 5px;
+    background-color: coral;
+    color: white;
+    border: 2px solid gold;
+    padding: 3px;
 }
 
 .largeBtn:hover {

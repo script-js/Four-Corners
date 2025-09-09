@@ -10,11 +10,11 @@
 <body>
     <h1>Setup</h1>
     <h2>General</h2>
-    Countdown:<br><input type="range" max="20" min="3" value="10" onchange="setTime(this.value)" />
-    <br><span id="timeText">10</span> seconds
-    <p></p>
-    Final Round Countdown:<br><input type="range" max="20" min="3" value="10" onchange="setFTime(this.value)" />
-    <br><span id="ftimeText">10</span> seconds
+    <p>Countdown:<br><input type="range" max="20" min="0" value="10" onchange="setTime(this.value)" onclick="setTime(this.value)" />
+    <br><span id="timeText">10</span> seconds</p>
+    <p>Final Round Countdown:<br><input type="range" max="20" min="0" value="10" onchange="setFTime(this.value)" onclick="setFTime(this.value)" />
+    <br><span id="ftimeText">10</span> seconds</p>
+    <p><input onchange="gamesetup.removeRooms = this.checked;" type="checkbox" onload="this.checked = false;" name="removecb"><label for="removecb">Stop eliminated rooms from being picked</label></p>
     <h2>Areas</h2>
     <div id="areas">
         <button onclick="addArea()">Add Area</button>
@@ -37,6 +37,7 @@
         areas: [],
         final: { time: 10 },
         st: false,
+        removeRooms: false,
         stdata: {}
     }
 
@@ -173,8 +174,12 @@
     }
 
     if (localStorage.getItem("game")) {
+        
         gamesetup = JSON.parse(localStorage.getItem("game"))
         gamesetup.areas.forEach(function (a) { addArea(a) })
+        gamesetup.final.areas.forEach(function (a) {
+            Array.from(areas.querySelectorAll(".areaContainer")).find((x) => x.querySelector("#name").value == a).querySelector("#final").checked = true;
+        })
         if (gamesetup.st) {
             stcb.checked = true;
             st.style.display = "block"
